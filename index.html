@@ -1,0 +1,385 @@
+<title>歌词联动</title>
+<meta charset="utf-8">
+<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0, user-scalable=0,width=device-width,initial-scale=1.0">
+<style>
+    *{  padding: 0;
+        margin: 0;
+        list-style: none;}
+    body{
+        font-size: 14px; font-family: "微软雅黑";line-height: 22px;
+       overflow-x: hidden;
+    }
+    ul li{list-style: none;}
+     #lrclistbox{width: 100%;height: 330px;background: #111; overflow: hidden;text-align: center;cursor: pointer;opacity: 0.7;}
+     #lrclist{
+        margin-top: 120px;
+     }
+    #lrclist li{color: #fff;padding:6px;transition:all 1s ease; }
+     .music{
+     	position: absolute;
+     	top: 10px;
+     	left:10%;
+     }
+     .btn{
+				width:100px;
+				height:30px;
+				border:0;
+				background:greenyellow;
+				color:#fff;
+               margin-left: 30%;
+				cursor: pointer;
+			}
+     .btnmain2{left:300px;top:450px;}
+			
+	.loveimg{width:20px;height:20px;position:absolute;}
+        #heart3d{
+            width: 100px;
+            height: 160px;
+            position: absolute;
+            left: 30%;
+            top: 62%;
+            transform-style:preserve-3d;
+            transform-origin: center;
+            animation: spin 15s linear infinite;
+        }
+        #heart3d>div{
+            width: 100px;
+            height: 160px;
+            border: solid red;
+            border-width: 1px 1px 0px 0px;
+            border-radius: 50% 50% 0% / 40% 50% 0%;
+            position: absolute;
+            transform: rotate(45deg);
+        }
+        @-webkit-keyframes spin{
+            from{transform: rotateX(0deg) rotateY(0deg)}
+            to{transform: rotateX(360deg) rotateY(360deg)}
+        }
+</style>
+<div class="container">
+			<canvas id="canvas" width="500" height="380"></canvas>
+		</div>
+        
+         <canvas id="mycan" width="500" height="240"></canvas>
+         <div id="heart3d"></div>
+    <textarea name="" id="txt" cols="38" rows="16" style="display: none">
+    认真的雪
+  [00:02.150]雪下得那么深下得那么认真
+[00:07.950]倒映出我躺在雪中的伤痕
+[00:12.140]
+[00:24.000]夜深人静那是爱情
+[00:33.940]偷偷的控制着我的心
+[00:37.430]提醒我爱你要随时待命
+[00:43.750]音乐安静还是爱情啊
+[00:51.760]一步一步吞噬着我的心
+[00:55.560]爱上你我失去了我自己
+[01:01.680]爱得那么认真爱得那么认真
+[01:06.860]可还是听见了你说不可能
+[01:11.100]已经十几年没下雪的上海突然飘雪
+[01:16.160]就在你说了分手的瞬间
+[01:20.060]雪下得那么深下得那么认真
+[01:25.010]倒映出我躺在雪中的伤痕
+[01:29.690]我并不在乎自己究竟多伤痕累累
+[01:34.520]可我在乎今后你有谁陪
+[01:40.140]
+[02:04.740]音乐安静还是爱情啊
+[02:14.360]一步一步吞噬着我的心
+[02:18.740]爱上你我失去了我自己
+[02:24.300]爱得那么深爱得那么认真
+[02:29.940]可还是听见了你说不可能
+[02:34.180]已经十几年没下雪的上海突然飘雪
+[02:39.270]就在你说了分手的瞬间
+[02:43.170]雪下得那么深下得那么认真
+[02:48.390]倒映出我躺在雪中的伤痕
+[02:53.250]我并不在乎自己究竟多伤痕累累
+[02:57.550]可我在乎今后你有谁陪
+[03:04.140]爱得那么深爱得那么认真
+[03:09.010]可还是听见了你说不可能
+[03:13.140]已经十几年没下雪的上海突然飘雪
+[03:18.310]就在你说了分手的瞬间
+[03:22.820]雪下得那么深下得那么认真
+[03:28.210]倒映出我躺在雪中的伤痕
+[03:32.710]我并不在乎自己究竟多伤痕累累
+[03:37.030]可我在乎今后你有谁陪
+[03:42.780]
+[03:43.870]爱得那么深比谁都认真
+[03:48.830]可最后还是只剩我一个人
+[03:53.110]漫天风雪请别再把我的眼泪擦去
+[03:57.780]毕竟那是我最爱的女人
+[04:03.820]毕竟我曾是她深爱的人
+</textarea>
+<div class="music">
+	<div id="lrclistbox">
+     <ul id="lrclist">
+  </ul>
+</div>
+ 
+  	 <audio src="http://dl.stream.qqmusic.qq.com/C400000jICmM0Z3kGy.m4a?vkey=87C6029EA630F1ECE9BCD98CA0F45D1C96506163402837A3DAADF64C67DE72C87412E7C5657459E6904B1C5F7E951E4D64EFDC752F133E17&guid=8204217685&uin=1214310389&fromtag=66" controls="" id="audio" autoplay ></audio>
+ <!-- 	<span id="ctime">00:00</span> / <span id="ttime">00:00</span> -->
+
+</div>
+<div class="demo"></div>
+
+<input type="button"   class="btn btnmain btnmain2" value="点着玩" />
+  
+
+
+
+  <script src="js/jquery-1.11.2.min.js"></script>
+    <script src="js/easing.js"></script>
+
+<script>
+    //获取歌词
+    var lrcContent=document.getElementById("txt").value;
+    //歌词列表盒子
+     var ulBox=document.getElementById("lrclistbox");
+     //歌词列表
+    var ulDom=document.getElementById("lrclist");
+    //歌词分割
+    var lrcs= lrcContent.split("\n");
+    var tTime=document.getElementById("ttime");
+    var cTime=document.getElementById("ctime");
+
+    //监听音乐播放的事件
+    var  audioDom=document.getElementById("audio")
+    audioDom.ontimeupdate=function(){
+        var total=this.duration;
+        var ctime=parseInt(this.currentTime);
+        // tTime.innerHTML=fortTime(total);
+        // cTime.innerHTML=fortTime(ctime);
+        var html=$("#t_"+ctime).text();
+        var chtml="";
+        for(var i=0;i<html.length;i++){
+         chtml+="<span style='color:"+randomColor()+"'>"+html.charAt(i)+"</span>"
+        }
+        $("#t_"+ctime).css("fontSize",18).html(chtml);
+        $("#t_"+ctime).siblings().removeAttr('style');
+
+        var index=$("#t_"+ctime).index();
+        // console.log(index);
+        if(index!=-1){
+                ulDom.style.marginTop=-index*31+120+"px";
+
+        }
+    
+    }
+    //处理时间
+    function fortTime(time){
+      var m=parseInt(time/60);
+      var s=parseInt(time%60);
+      if(m<10){m="0"+m};
+      if(s<10){s="0"+s};
+      return m+":"+s;
+    }
+
+
+    //歌词颜色
+    function randomColor(){
+        var r=Math.ceil(Math.random()*256);
+        var g=Math.ceil(Math.random()*256);
+        var b=Math.ceil(Math.random()*256);
+        return "rgb("+r+","+g+","+b+")";
+
+    }
+    //把每一行的歌词放入ullist
+    for(var i=0;i<lrcs.length;i++){
+       
+       
+        var lirc=lrcs[i];
+        //去掉空格
+        var item=lirc.replace(/^\s+|\s+$/gm,"");
+        //歌词和时间分割
+        var ms=item.split("]");//   切割后分为前后部分 为数组
+        if(ms[1]){
+            var mt=ms[0].replace("[","").split(":");
+             //获取每一行的歌词
+             var m=parseFloat(mt[0])*60;//分变成秒
+             var s=parseInt(mt[1]);
+             var msc=m+s;//分秒加起来
+             // console.log(msc);
+
+             var liDom=document.createElement("li");
+                liDom.innerHTML=ms[1];
+                liDom.id="t_"+msc;
+                ulDom.appendChild(liDom);
+        }
+       
+
+    }
+</script>
+	<script type="text/javascript">
+					
+				var canvas = document.getElementById("canvas");
+				var context = canvas.getContext("2d");
+				var arr = [];
+				
+				setInterval(function(){
+					
+					context.clearRect(0,0,canvas.width,canvas.height);
+					
+					for(var i=0;i<arr.length;i++){
+						arr[i].r += 1;
+						arr[i].op -= 0.01;
+						if(arr[i].op<=0){
+							arr.splice(i,1);
+						}
+					}
+					
+					for(var i=0;i<arr.length;i++){
+						context.beginPath();
+						context.fillStyle = "rgba("+arr[i].c1+","+arr[i].c2+","+arr[i].c3+","+arr[i].op+")";
+						context.arc(arr[i].x,arr[i].y,arr[i].r,0,2*Math.PI);
+						context.closePath();
+						context.fill();
+					}
+					
+					
+				},1000/60);
+				
+				function createArc(){
+					var x = canvas.width * Math.random();
+					var y = canvas.height * Math.random();
+					var r = 10;
+					var c1 = Math.floor(Math.random() * 256);
+					var c2 = Math.floor(Math.random() * 256);
+					var c3 = Math.floor(Math.random() * 256);
+					arr.push({
+						x:x,
+						y:y,
+						r:r,
+						c1:c1,
+						c2:c2,
+						c3:c3,
+						op:1
+					});
+				};
+				
+				setInterval(function(){
+					createArc();
+				},100);
+						$(function(){
+
+				$(".btnmain").on("click",function(){
+					var ctop = $(this).offset().top-20;
+					var cleft = $(this).offset().left +30;
+				
+					var num  = Math.floor(Math.random() * 3 + 1);
+					var rand = randRange(100,900);
+					$(".demo").append("<img src='img/love"+num+".png' class='loveimg' alt='' />");
+					$("img").css({left:cleft,top:ctop}).animate({
+						top:100,
+						opacity:0,
+						left:rand
+					},3000);
+				});
+			});
+			
+			//范围随机
+			function randRange(x,y){
+				var x = Math.min(x,y);
+				var y = Math.max(x,y);
+				return Math.random() * (x-y) + y;
+			}
+			
+
+             $("html,body").on("click",function(e){
+                //2：获取鼠标的坐标 x,y
+                var x = e.pageX || e.clientX;
+                var y = e.pageY || e.clientY;
+                var minheight = window.innerHeight / 2;
+                //3: 创建一个strong标签，内容数字(随机数字)
+                var num  = parseInt(Math.random()*10);
+                var $strong = $("<strong>+"+num+"</strong>");
+                //4: 将坐标赋值给strong,并且加定位
+                $strong.css({position:"absolute",top:y-20,left:x,color:randomColor()});
+                $(this).append($strong);
+
+                var top = y-minheight;
+                if(top<=0)top=0;
+                $strong.animate({top:top,fontSize:96,opacity:0},{
+                     queue:false,
+                     duration: 500,
+                     easing: 'easeOutSine',//easeOutQuart easeOutSine easeInOutExpo easeOutCirc easeOutElastic easeOutBack easeOutBounce easeInOutBounce
+                     complete: function(){
+                        $(this).remove();
+                    }
+                });
+                //6: 动画，随机颜色的处理
+                e.stopPropagation();
+             });
+        function randomColor(){
+            var r = Math.floor(Math.random()*256);
+            var g = Math.floor(Math.random()*256);
+            var b = Math.floor(Math.random()*256);
+            return "rgb("+r+","+g+","+b+")";//IE7不支出rgb
+        };
+
+
+	   var canvas2=document.getElementById("mycan");
+        var g=canvas2.getContext("2d");
+         //设置背景
+         var skyStyle=g.createLinearGradient(0,0,0,canvas2.height);
+        skyStyle.addColorStop(0,'white');//#035
+        skyStyle.addColorStop(1,'black');
+        g.fillStyle=skyStyle;
+        g.fillRect(0,0,canvas2.width,canvas2.height);
+  
+    
+       //星星
+       var timer=null;
+          var f=0;
+      timer=setInterval(function(){
+      
+          for(var i=0;i<20;i++){
+       var r=Math.random()*6;//
+       var x=Math.random()*canvas2.width;
+       var y=Math.random()*canvas2.height;
+       var a=Math.random()*360;
+       drawStar(g,r/2,r,x,y,a);
+   }
+     f++;
+ 
+     if(f==3){
+
+      clearInterval(timer)
+
+     }
+
+
+
+       },1000)
+  function drawStar(g,r,R,x,y,rot){ 
+    g.beginPath();       
+    for(var i=0;i<5;i++){
+       g.lineTo(Math.cos(Math.PI/180*(18+i*72-rot))*R+x,-Math.sin(Math.PI/180*(18+i*72-rot))*R+y);
+       g.lineTo(Math.cos(Math.PI/180*(54+i*72-rot))*r+x,-Math.sin(Math.PI/180*(54+i*72-rot))*r+y);
+      }   
+    g.closePath();
+    g.lineWidth=10;
+    g.fillStyle="#fb3";
+
+
+    g.fill();
+
+     }
+    var oHeat=document.getElementById("heart3d");
+    var num=36;
+    for(var i=0;i<num;i++){
+        var oCreat=document.createElement("div");
+        oCreat.style.borderColor=colors();
+          oCreat.style.borderColor=colors();
+
+        oCreat.style.transform="rotateY("+10*i+"deg) rotateZ(45deg) translateX(30px)";
+        oHeat.appendChild(oCreat);
+    }
+    function colors(){
+        var r=Math.floor(Math.random()*256);
+        var g=Math.floor(Math.random()*256);
+        var b=Math.floor(Math.random()*256);
+        return 'rgb('+r+','+g+','+b+')'
+    }
+
+
+
+		</script>	
+	
